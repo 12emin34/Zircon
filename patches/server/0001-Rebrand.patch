@@ -1,0 +1,90 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: 12emin34 <macanovic.emin@gmail.com>
+Date: Tue, 25 May 2021 18:13:07 +0200
+Subject: [PATCH] Rebrand
+
+
+diff --git a/pom.xml b/pom.xml
+index 5136762f8e95cb1ea2564b6801703fb6f019fbe1..f5a8572717154ec91cedc8803896b10b7f480435 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -40,8 +40,10 @@
+     <dependencies>
+         <dependency>
+             <!-- Purpur start - our "upstream" is Paper (not Tuinity), so this is necessary for DependencyLoading.kt to work properly -->
+-            <groupId>net.pl3x.purpur</groupId>
+-            <artifactId>purpur-api</artifactId>
++            <!-- Zircon start -->
++            <groupId>me._12emin34.zircon</groupId>
++            <artifactId>zircon-api</artifactId>
++            <!-- Zircon end -->
+             <!-- Purpur end -->
+             <version>${project.version}</version>
+             <scope>compile</scope>
+diff --git a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
+index b9c5479e5561f8fe68ea8f94fbf4e64de8a53bf9..4f091e18dd87d275293e1ad745647e740b5f029f 100644
+--- a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
++++ b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
+@@ -28,8 +28,8 @@ public class PaperVersionFetcher implements VersionFetcher {
+     @Nonnull
+     @Override
+     public Component getVersionMessage(@Nonnull String serverVersion) {
+-        String[] parts = serverVersion.substring("git-Airplane-".length()).split("[-\\s]"); // Tuinity
+-        final Component updateMessage = getUpdateStatusMessage("TECHNOVE/Airplane", GITHUB_BRANCH_NAME, parts[0]); // Tuinity
++        String[] parts = serverVersion.substring("git-Zircon-".length()).split("[-\\s]"); // Tuinity // Zircon
++        final Component updateMessage = getUpdateStatusMessage("12emin34/Zircon", GITHUB_BRANCH_NAME, parts[0]); // Tuinity // Zircon
+         final Component history = getHistory();
+ 
+         return history != null ? TextComponent.ofChildren(updateMessage, Component.newline(), history) : updateMessage;
+diff --git a/src/main/java/net/pl3x/purpur/PurpurConfig.java b/src/main/java/net/pl3x/purpur/PurpurConfig.java
+index 5a228c14a6e6335399f3436419deb51420082ad2..a72b179367ab8f9f6ceaf9f4aec358a8e8939ad5 100644
+--- a/src/main/java/net/pl3x/purpur/PurpurConfig.java
++++ b/src/main/java/net/pl3x/purpur/PurpurConfig.java
+@@ -187,7 +187,7 @@ public class PurpurConfig {
+         if (!TimingsManager.hiddenConfigs.contains("settings.seed.end-spike")) TimingsManager.hiddenConfigs.add("settings.seed.end-spike");
+     }
+ 
+-    public static String serverModName = "Purpur";
++    public static String serverModName = "Zircon"; // Zircon
+     private static void serverModName() {
+         serverModName = getString("settings.server-mod-name", serverModName);
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index af3c01156a9a5f6f08fff9db67c9c089a321cb29..fe73374018e6ad81bfc69a0d0393f8f90ed8eee1 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -230,7 +230,7 @@ import javax.annotation.Nullable; // Paper
+ import javax.annotation.Nonnull; // Paper
+ 
+ public final class CraftServer implements Server {
+-    private final String serverName = "Purpur"; // Paper // Tuinity // Airplane // Purpur
++    private final String serverName = "Zircon"; // Paper // Tuinity // Airplane // Purpur // Zircon
+     private final String serverVersion;
+     private final String bukkitVersion = Versioning.getBukkitVersion();
+     private final Logger logger = Logger.getLogger("Minecraft");
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java b/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
+index bfe4f7ed53620510b52d4f01c5ea2a3f726942d8..aa664b3e4f42fae44dcb8251ac3e6e591f9cf8e1 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
+@@ -397,7 +397,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
+ 
+     @Override
+     public com.destroystokyo.paper.util.VersionFetcher getVersionFetcher() {
+-        return new net.pl3x.purpur.PurpurVersionFetcher();
++        return new com.destroystokyo.paper.PaperVersionFetcher(); // Zircon
+     }
+ 
+     @Override
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+index 191f5331f0c7871f80f0da9cc38345ce33353577..3b25e9d6563c47e275143498036e9bfadc62e0bb 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+@@ -11,7 +11,7 @@ public final class Versioning {
+     public static String getBukkitVersion() {
+         String result = "Unknown-Version";
+ 
+-        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/net.pl3x.purpur/purpur-api/pom.properties"); // Tuinity // Airplane // Purpur
++        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/me._12emin34.zircon/zircon-api/pom.properties"); // Tuinity // Airplane // Purpur // Zircon
+         Properties properties = new Properties();
+ 
+         if (stream != null) {
