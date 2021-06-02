@@ -1,10 +1,7 @@
-import xyz.jpenilla.toothpick.gitCmd
-import xyz.jpenilla.toothpick.toothpick
-
 plugins {
     `java-library`
     `maven-publish`
-    id("xyz.jpenilla.toothpick") version "1.0.0-SNAPSHOT"
+    id("xyz.jpenilla.toothpick")
 }
 
 toothpick {
@@ -13,7 +10,7 @@ toothpick {
     forkUrl = "https://github.com/12emin34/Zircon"
     paperclipName = "zirconclip"
     val versionTag = System.getenv("BUILD_NUMBER")
-            ?: "\"${gitCmd("rev-parse", "--short", "HEAD").output}\""
+            ?: "\"${commitHash() ?: error("Could not obtain git hash")}\""
     forkVersion = "git-$forkName-$versionTag"
 
     minecraftVersion = "1.16.5"
@@ -24,11 +21,11 @@ toothpick {
     upstreamBranch = "origin/master"
 
     server {
-        project = project(":$forkNameLowercase-server")
+        project = projects.zirconServer.dependencyProject
         patchesDir = rootProject.projectDir.resolve("patches/server")
     }
     api {
-        project = project(":$forkNameLowercase-api")
+        project = projects.zirconApi.dependencyProject
         patchesDir = rootProject.projectDir.resolve("patches/api")
     }
 }
