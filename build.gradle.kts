@@ -18,7 +18,7 @@ toothpick {
     nmsRevision = "R0.1-SNAPSHOT"
 
     upstream = "Purpur"
-    upstreamBranch = "origin/master"
+    upstreamBranch = "ver/1.16.5"
 
     server {
         project = projects.zirconServer.dependencyProject
