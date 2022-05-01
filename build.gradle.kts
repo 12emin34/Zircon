@@ -1,42 +1,72 @@
+import io.papermc.paperweight.util.constants.*
+
 plugins {
-    `java-library`
+    java
     `maven-publish`
-    id("xyz.jpenilla.toothpick")
+    id("com.github.johnrengelman.shadow") version "7.1.0" apply false
+    id("io.papermc.paperweight.patcher") version "1.2.0"
 }
 
-toothpick {
-    forkName = "Zircon"
-    groupId = "me._12emin34.zircon"
-    forkUrl = "https://github.com/12emin34/Zircon"
-    paperclipName = "zirconclip"
-    val versionTag = System.getenv("BUILD_NUMBER")
-            ?: "\"${commitHash() ?: error("Could not obtain git hash")}\""
-    forkVersion = "git-$forkName-$versionTag"
-
-    minecraftVersion = "1.16.5"
-    nmsPackage = "1_16_R3"
-    nmsRevision = "R0.1-SNAPSHOT"
-
-    upstream = "Purpur"
-    upstreamBranch = "ver/1.16.5"
-
-    server {
-        project = projects.zirconServer.dependencyProject
-        patchesDir = rootProject.projectDir.resolve("patches/server")
+repositories {
+    mavenCentral()
+    maven("https://papermc.io/repo/repository/maven-public/") {
+        content {
+            onlyForConfigurations(PAPERCLIP_CONFIG)
+        }
     }
-    api {
-        project = projects.zirconApi.dependencyProject
-        patchesDir = rootProject.projectDir.resolve("patches/api")
-    }
+}
+
+dependencies {
+    remapper("net.fabricmc:tiny-remapper:0.6.0:fat")
+    decompiler("net.minecraftforge:forgeflower:1.5.498.12")
+    paperclip("io.papermc:paperclip:2.0.1")
 }
 
 subprojects {
-    repositories {
-        maven("https://nexus.velocitypowered.com/repository/velocity-artifacts-snapshots/")
-    }
+    apply(plugin = "java")
 
     java {
-        sourceCompatibility = JavaVersion.toVersion(8)
-        targetCompatibility = JavaVersion.toVersion(8)
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(16))
+        }
+    }
+
+    tasks.withType<JavaCompile>().configureEach {
+        options.encoding = "UTF-8"
+        options.release.set(16)
+    }
+
+    repositories {
+        mavenCentral()
+        maven("https://oss.sonatype.org/content/groups/public/")
+        maven("https://papermc.io/repo/repository/maven-public/")
+        maven("https://ci.emc.gs/nexus/content/groups/aikar/")
+        maven("https://repo.aikar.co/content/groups/aikar")
+        maven("https://repo.md-5.net/content/repositories/releases/")
+        maven("https://hub.spigotmc.org/nexus/content/groups/public/")
+        maven("https://jitpack.io")
+        maven("https://oss.sonatype.org/content/repositories/snapshots/")
+    }
+}
+
+paperweight {
+    serverProject.set(project(":Zircon-Server"))
+
+    remapRepo.set("https://maven.fabricmc.net/")
+    decompileRepo.set("https://files.minecraftforge.net/maven/")
+
+    useStandardUpstream("purpur") {
+        url.set(github("12emin34", "Purpur"))
+        ref.set(providers.gradleProperty("purpurCommit"))
+
+        withStandardPatcher {
+            baseName("Purpur")
+
+            apiPatchDir.set(layout.projectDirectory.dir("patches/api"))
+            apiOutputDir.set(layout.projectDirectory.dir("Zircon-API"))
+
+            serverPatchDir.set(layout.projectDirectory.dir("patches/server"))
+            serverOutputDir.set(layout.projectDirectory.dir("Zircon-Server"))
+        }
     }
 }

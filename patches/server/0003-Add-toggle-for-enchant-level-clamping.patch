@@ -1,0 +1,46 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: 12emin34 <macanovic.emin@gmail.com>
+Date: Sat, 30 Apr 2022 10:32:40 +0200
+Subject: [PATCH] Add toggle for enchant level clamping
+
+
+diff --git a/src/main/java/me/_12emin34/zircon/ZirconConfig.java b/src/main/java/me/_12emin34/zircon/ZirconConfig.java
+index f6bff62fcc97af95456efa8aae1d924b8b96deb6..c2c516294ae2964ebb3921e368b009f58894a2c0 100644
+--- a/src/main/java/me/_12emin34/zircon/ZirconConfig.java
++++ b/src/main/java/me/_12emin34/zircon/ZirconConfig.java
+@@ -143,4 +143,8 @@ public class ZirconConfig {
+         }
+         return builder.build();
+     }
++    public static boolean clampEnchantLevels = true;
++    private static void enchantmentSettings () {
++        clampEnchantLevels = getBoolean("settings.enchantment.clamp-levels", clampEnchantLevels);
++    }
+ }
+\ No newline at end of file
+diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
+index 1520740b722c252af847f709cbedb186dff7e836..96febd1f1df21001d5cc557fdf357c920b61dbaf 100644
+--- a/src/main/java/net/minecraft/world/item/ItemStack.java
++++ b/src/main/java/net/minecraft/world/item/ItemStack.java
+@@ -1141,7 +1141,7 @@ public final class ItemStack {
+ 
+         ListTag nbttaglist = this.tag.getList("Enchantments", 10);
+ 
+-        nbttaglist.add(EnchantmentHelper.storeEnchantment(EnchantmentHelper.getEnchantmentId(enchantment), (byte) level));
++        nbttaglist.add(EnchantmentHelper.storeEnchantment(EnchantmentHelper.getEnchantmentId(enchantment), (me._12emin34.zircon.ZirconConfig.clampEnchantLevels) ? (byte) level : (short) level)); // Zircon
+         processEnchantOrder(this.tag); // Paper
+     }
+ 
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java b/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java
+index 955e482e4bc83f2b777cd2e4254c40beef08853b..db0f8954a233878db6dfa43ae94446245b1281c7 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java
+@@ -46,7 +46,7 @@ public class EnchantmentHelper {
+     }
+ 
+     public static int getEnchantmentLevel(CompoundTag nbt) {
+-        return Mth.clamp(nbt.getInt("lvl"), 0, 255);
++        return Mth.clamp(nbt.getInt("lvl"), 0, (me._12emin34.zircon.ZirconConfig.clampEnchantLevels) ? 255 : 32767); // Zircon
+     }
+ 
+     @Nullable

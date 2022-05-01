@@ -50,12 +50,9 @@ manifest.mf
 
 # other stuff
 run/
-docs/build/
 
-Zircon-Server
+build-data/
 Zircon-API
-mc-dev
-zirconclip.jar
-*clip.jar
-last-purpur
-mcdevimports.conf
+Zircon-MojangAPI
+Zircon-Server
+*.jar
